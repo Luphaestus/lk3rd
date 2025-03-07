@@ -23,55 +23,59 @@ void draw_line_lcd(int color_fg, int color_bg)
 	print_lcd_update(color_fg, color_bg, str);
 }
 
-void draw_current_action(enum action current_action)
+void draw_action(u32 font_color, const char *fmt, ...)
+{
+	draw_line_lcd(font_color, FONT_BLACK);
+	print_lcd_update(font_color, FONT_BLACK, fmt);
+	draw_line_lcd(font_color, FONT_BLACK);
+}
+
+const char* get_action_text(enum action current_action)
 {
 	switch(current_action)
 	{
 		case ACTION_START:
-			draw_line_lcd(FONT_GREEN, FONT_BLACK);
-			print_lcd_update(FONT_GREEN, FONT_BLACK, "START");
-			draw_line_lcd(FONT_GREEN, FONT_BLACK);
-			break;
-
+			return "START";
 		case ACTION_REBOOT_RECOVERY:
-			draw_line_lcd(FONT_YELLOW, FONT_BLACK);
-			print_lcd_update(FONT_YELLOW, FONT_BLACK, "Reboot recovery");
-			draw_line_lcd(FONT_YELLOW, FONT_BLACK);
-			break;
-
+			return "Reboot recovery";
 		case ACTION_REBOOT_BOOTLOADER:
-			draw_line_lcd(FONT_RED, FONT_BLACK);
-			print_lcd_update(FONT_RED, FONT_BLACK, "Reboot bootloader");
-			draw_line_lcd(FONT_RED, FONT_BLACK);
-			break;
-
+			return "Reboot bootloader";
 		case ACTION_REBOOT_FASTBOOTD:
-			draw_line_lcd(FONT_ORANGE, FONT_BLACK);
-			print_lcd_update(FONT_ORANGE, FONT_BLACK, "Reboot FastbootD");
-			draw_line_lcd(FONT_ORANGE, FONT_BLACK);
-			break;
-
+			return "Reboot FastbootD";
 		case ACTION_REBOOT_DOWNLOAD:
-			draw_line_lcd(FONT_BLUE, FONT_BLACK);
-			print_lcd_update(FONT_BLUE, FONT_BLACK, "Reboot Download");
-			draw_line_lcd(FONT_BLUE, FONT_BLACK);
-			break;
-
+			return "Reboot Download";
 		case ACTION_POWEROFF:
-			draw_line_lcd(FONT_RED, FONT_BLACK);
-			print_lcd_update(FONT_RED, FONT_BLACK, "Power off");
-			draw_line_lcd(FONT_RED, FONT_BLACK);
-			break;
-
+			return "Power off";
 		default:
-			break;
+			return "Unknown action";
 	}
 }
 
-
+u32 get_action_colour(enum action current_action)
+{
+	switch(current_action)
+	{
+		case ACTION_START:
+			return FONT_GREEN;
+		case ACTION_REBOOT_RECOVERY:
+			return FONT_YELLOW;
+		case ACTION_REBOOT_BOOTLOADER:
+			return FONT_RED;
+		case ACTION_REBOOT_FASTBOOTD:
+			return FONT_ORANGE;
+		case ACTION_REBOOT_DOWNLOAD:
+			return FONT_BLUE;
+		case ACTION_POWEROFF:
+			return FONT_RED;
+		default:
+			return FONT_WHITE;
+	}
+}
 
 void draw_menu(enum action current_action)
 {
+
+#ifdef INLINE_MODE
 	uint32_t menu_offset = 1;
 
 #if defined(CONFIG_HAS_CURVED_DISPLAY)
@@ -85,11 +89,18 @@ void draw_menu(enum action current_action)
 	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
 	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
 	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
+	draw_action(get_action_colour(current_action), get_action_text(current_action));
+
+#endif
+#else 
+	clear_line(FONT_BLACK, 0);
+	for (int i = ACTION_START; i < ACTION_END; i++)
+	{
+		u32 colour = i == (int)current_action ? get_action_colour(i) : FONT_WHITE;
+		draw_action(colour, get_action_text(i));
+	}
 #endif
 
-
-
-	draw_current_action(current_action);
 	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
 	print_lcd_update(FONT_WHITE, FONT_BLACK, "Press volume key to select, and press power key to select");
 	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
