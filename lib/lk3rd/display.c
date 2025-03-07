@@ -77,21 +77,8 @@ void draw_menu(enum action current_action)
 
 #ifdef INLINE_MODE
 	uint32_t menu_offset = 1;
-
-#if defined(CONFIG_HAS_CURVED_DISPLAY)
-	// Offset for curved displays
-	menu_offset += 3;
-#endif
-
 	clear_line(FONT_BLACK, menu_offset); // Only clear lines that change to avoid flickering
-
-#if defined(CONFIG_HAS_CURVED_DISPLAY)
-	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
-	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
-	print_lcd_update(FONT_WHITE, FONT_BLACK, "");
 	draw_action(get_action_colour(current_action), get_action_text(current_action));
-
-#endif
 #else 
 	clear_line(FONT_BLACK, 0);
 	for (int i = ACTION_START; i < ACTION_END; i++)
