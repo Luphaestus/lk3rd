@@ -54,26 +54,6 @@ void do_reboot(enum action action)
 {
 	switch(action)
 	{
-		case ACTION_START:
-			platform_prepare_reboot();
-			platform_do_reboot("");
-			break;
-		case ACTION_REBOOT_BOOTLOADER:
-			platform_prepare_reboot();
-			platform_do_reboot("reboot-bootloader");
-			break;
-		case ACTION_REBOOT_RECOVERY:
-			platform_prepare_reboot();
-			platform_do_reboot("reboot-recovery");
-			break;
-		case ACTION_REBOOT_FASTBOOTD:
-			platform_prepare_reboot();
-			platform_do_reboot("reboot-fastboot");
-			break;
-		case ACTION_REBOOT_DOWNLOAD:
-			platform_prepare_reboot();
-			platform_do_reboot("reboot-download");
-			break;
 		case ACTION_POWEROFF:
 #if WITH_DEV_POWER_PMIC_S2MPS_19_22
 			while(true) {
@@ -103,6 +83,19 @@ void do_reboot(enum action action)
 			platform_do_reboot("");
 			break;
 #endif
+		case ACTION_START:
+		case ACTION_REBOOT_BOOTLOADER:
+		case ACTION_REBOOT_RECOVERY:
+		case ACTION_REBOOT_FASTBOOTD:
+		case ACTION_REBOOT_DOWNLOAD:
+			platform_prepare_reboot();
+			platform_do_reboot(
+				action == ACTION_REBOOT_BOOTLOADER ? "reboot-bootloader" :
+				action == ACTION_REBOOT_RECOVERY ? "reboot-recovery" :
+				action == ACTION_REBOOT_FASTBOOTD ? "reboot-fastboot" :
+				action == ACTION_REBOOT_DOWNLOAD ? "reboot-download" : ""
+			);
+			break;
 		default:
 			break;
 	}
