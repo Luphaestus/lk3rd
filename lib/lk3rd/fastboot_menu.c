@@ -162,7 +162,7 @@ int fastboot_menu_entry(void *arg)
 				notify_action_switch(1);
 				key_stuck = 2;
 				last_button_press = current_time();
-				repeat_delay *= .75;
+				repeat_delay *= .9;
 			}
 			else
 			{
