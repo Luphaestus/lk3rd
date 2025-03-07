@@ -75,9 +75,9 @@ u32 get_action_colour(enum action current_action)
 void draw_menu(enum action current_action)
 {
 
+#define INLINE_MODE
 #ifdef INLINE_MODE
-	uint32_t menu_offset = 1;
-	clear_line(FONT_BLACK, menu_offset); // Only clear lines that change to avoid flickering
+	clear_line(FONT_BLACK, 1); // Only clear lines that change to avoid flickering
 	draw_action(get_action_colour(current_action), get_action_text(current_action));
 #else 
 	clear_line(FONT_BLACK, 0);
